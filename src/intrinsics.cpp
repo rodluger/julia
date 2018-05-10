@@ -780,15 +780,9 @@ static Value *emit_untyped_intrinsic(jl_codectx_t &ctx, intrinsic f, Value **arg
                                      jl_datatype_t **newtyp, jl_value_t *xtyp);
 
 
-static jl_cgval_t emit_select_value(jl_codectx_t &ctx, jl_value_t **args, size_t nargs, jl_value_t *rt_hint)
+static jl_cgval_t emit_ifelse(jl_codectx_t &ctx, jl_cgval_t c, jl_cgval_t x, jl_cgval_t y, jl_value_t *rt_hint)
 {
-    if (nargs != 3)
-        jl_errorf("intrinsic #%d select_value: wrong number of arguments", select_value);
-    jl_cgval_t c = emit_expr(ctx, args[1]);
-    jl_cgval_t x = emit_expr(ctx, args[2]);
-    jl_cgval_t y = emit_expr(ctx, args[3]);
-
-    Value *isfalse = emit_condition(ctx, c, "select_value"); // emit the first argument
+    Value *isfalse = emit_condition(ctx, c, "ifelse"); // emit the first argument
     // emit X and Y arguments
     jl_value_t *t1 = x.typ;
     jl_value_t *t2 = y.typ;
