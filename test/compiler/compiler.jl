@@ -1562,3 +1562,10 @@ for stmt in typed_code
 end
 
 @test found_well_typed_getfield_call
+
+@noinline _f_ifelse_isa_() = rand(Bool) ? 1 : nothing
+function _g_ifelse_isa_()
+    x = _f_ifelse_isa_()
+    ifelse(isa(x, Nothing), 1, x)
+end
+@test Base.return_types(_g_ifelse_isa_, ()) == [Int]
