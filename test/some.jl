@@ -2,7 +2,9 @@
 
 ## promote()
 
-@test promote_type(Some{Int}, Some{Float64}) === Some{Float64}
+@test promote_type(Some{Int}, Some{Float64}) == Some
+@test promote_type(Some{Int}, Some{Real}) == Some{Real}
+@test promote_type(Some{Int}, Nothing) == Union{Some{Int},Nothing}
 
 ## convert()
 
@@ -75,6 +77,10 @@ for v in (nothing, missing)
     @test coalesce(v, nothing) === nothing
     @test coalesce(v, missing, v) === v
     @test coalesce(v, nothing, v) === v
+
+    # issue #26927
+    @test all(coalesce.([missing, nothing, Some(nothing), Some(missing)], "replacement") .===
+              [ "replacement", "replacement", nothing, missing ])
 end
 
 # notnothing()
